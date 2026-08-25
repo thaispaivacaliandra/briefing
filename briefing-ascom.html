@@ -1,0 +1,1249 @@
+<title>Briefing ASCOM</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700;800&family=Source+Sans+3:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+  :root{
+    --bg:#FFFFFF;
+    --bg-sunken:#F4F7F7;
+    --surface:#FFFFFF;
+    --surface-2:#EFF4F4;
+    --line:#DCE6E6;
+    --line-soft:#E9F0F0;
+    --ink:#12292B;
+    --ink-soft:#5B6D6E;
+    --ink-faint:#8B9C9C;
+    --brand:#024248;
+    --brand-deep:#02333A;
+    --brand-mid:#006369;
+    --brand-on:#FFFFFF;
+    --accent:#00838D;
+    --accent-strong:#006369;
+    --accent-tint:#E3F6F6;
+    --accent-tint-line:#BFEBEA;
+    --success:#0E8F53;
+    --success-tint:#E4F8ED;
+    --success-line:#BCEBCE;
+    --danger:#B4442E;
+    --danger-tint:#FBECE8;
+    --focus:#00838D;
+    --shadow: 0 1px 2px rgba(2,66,72,.06), 0 8px 24px -12px rgba(2,66,72,.18);
+    --radius-card:16px;
+    --radius-btn:9px;
+    --radius-tag:999px;
+  }
+
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#04191B;
+      --bg-sunken:#031315;
+      --surface:#0A2426;
+      --surface-2:#0F2E30;
+      --line:#123739;
+      --line-soft:#0F2E30;
+      --ink:#EAF3F3;
+      --ink-soft:#9FB8B8;
+      --ink-faint:#6C8788;
+      --brand:#FFFFFF;
+      --brand-deep:#F3FAFA;
+      --brand-mid:#7FD9DB;
+      --brand-on:#04191B;
+      --accent:#3FD3D9;
+      --accent-strong:#6BEBED;
+      --accent-tint:#0D3335;
+      --accent-tint-line:#164648;
+      --success:#4FD98A;
+      --success-tint:#0D3020;
+      --success-line:#1B4A34;
+      --danger:#F0937E;
+      --danger-tint:#3A1712;
+      --focus:#6BEBED;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.6);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#04191B;
+    --bg-sunken:#031315;
+    --surface:#0A2426;
+    --surface-2:#0F2E30;
+    --line:#123739;
+    --line-soft:#0F2E30;
+    --ink:#EAF3F3;
+    --ink-soft:#9FB8B8;
+    --ink-faint:#6C8788;
+    --brand:#FFFFFF;
+    --brand-deep:#F3FAFA;
+    --brand-mid:#7FD9DB;
+    --brand-on:#04191B;
+    --accent:#3FD3D9;
+    --accent-strong:#6BEBED;
+    --accent-tint:#0D3335;
+    --accent-tint-line:#164648;
+    --success:#4FD98A;
+    --success-tint:#0D3020;
+    --success-line:#1B4A34;
+    --danger:#F0937E;
+    --danger-tint:#3A1712;
+    --focus:#6BEBED;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 12px 32px -16px rgba(0,0,0,.6);
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--ink);
+    font-family:'Source Sans 3', system-ui, -apple-system, sans-serif;
+    font-size:15.5px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.disp{
+    font-family:'Public Sans', system-ui, sans-serif;
+    text-wrap:balance;
+    color:var(--brand);
+    margin:0;
+  }
+  .mono{font-family:'IBM Plex Mono', ui-monospace, monospace;}
+  a{color:var(--accent-strong);}
+  button{font-family:inherit;}
+  ::selection{background:var(--accent-tint-line);}
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important; transition-duration:.001ms !important;}
+  }
+
+  .app{
+    display:grid;
+    grid-template-columns:280px 1fr;
+    min-height:100vh;
+  }
+  @media (max-width:880px){
+    .app{grid-template-columns:1fr;}
+    .rail{display:none;}
+    .rail.rail-open{display:flex;}
+  }
+
+  /* ---------- RAIL ---------- */
+  .rail{
+    background:var(--brand);
+    color:rgba(255,255,255,.92);
+    padding:28px 22px 24px;
+    display:flex;
+    flex-direction:column;
+    gap:26px;
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow-y:auto;
+  }
+  .rail-brand{
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+  }
+  .rail-brand .mark{
+    font-family:'Public Sans',sans-serif;
+    font-weight:800;
+    font-size:14px;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:#fff;
+  }
+  .rail-brand .sub{
+    font-size:12.5px;
+    color:rgba(255,255,255,.68);
+  }
+  .rail-sections{
+    display:flex;
+    flex-direction:column;
+    gap:2px;
+  }
+  .rail-sec{
+    display:flex;
+    gap:12px;
+    padding:10px 10px;
+    border-radius:11px;
+    cursor:default;
+    align-items:flex-start;
+  }
+  .rail-sec .num{
+    flex:none;
+    width:26px;height:26px;
+    border-radius:999px;
+    border:1.5px solid rgba(255,255,255,.35);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    font-weight:600;
+    color:rgba(255,255,255,.75);
+  }
+  .rail-sec.done .num{background:var(--accent-strong);border-color:var(--accent-strong);color:#03282A;}
+  .rail-sec.active{background:rgba(255,255,255,.1);}
+  .rail-sec.active .num{background:#fff;border-color:#fff;color:var(--brand-deep);}
+  .rail-sec .txt{padding-top:2px;}
+  .rail-sec .name{font-size:13.5px;font-weight:600;color:#fff;}
+  .rail-sec .desc{font-size:12px;color:rgba(255,255,255,.6);margin-top:1px;}
+  .rail-foot{
+    margin-top:auto;
+    font-size:11.5px;
+    color:rgba(255,255,255,.5);
+    border-top:1px solid rgba(255,255,255,.15);
+    padding-top:14px;
+  }
+  .rail-reset{
+    margin-top:8px;
+    background:none;border:1px solid rgba(255,255,255,.3);
+    color:rgba(255,255,255,.85);
+    border-radius:var(--radius-btn);
+    padding:7px 10px;
+    font-size:12px;
+    cursor:pointer;
+  }
+  .rail-reset:hover{background:rgba(255,255,255,.1);}
+
+  /* ---------- MAIN ---------- */
+  .main{
+    display:flex;
+    flex-direction:column;
+    min-height:100vh;
+  }
+  .topbar{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    padding:14px 28px 12px;
+    border-bottom:1px solid var(--line);
+    background:var(--bg);
+    position:sticky;
+    top:0;
+    z-index:5;
+  }
+  .topbar-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .crumbs{
+    display:flex;
+    align-items:baseline;
+    gap:9px;
+    font-size:13px;
+    color:var(--ink-soft);
+  }
+  .crumbs .badge{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11.5px;
+    font-weight:600;
+    color:var(--accent-strong);
+    background:var(--accent-tint);
+    border:1px solid var(--accent-tint-line);
+    padding:2px 8px;
+    border-radius:var(--radius-tag);
+  }
+  .mobile-toggle{
+    display:none;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    border-radius:var(--radius-btn);
+    padding:6px 10px;
+    font-size:12.5px;
+    color:var(--ink);
+    cursor:pointer;
+  }
+  @media (max-width:880px){ .mobile-toggle{display:inline-flex;} }
+
+  .stage{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    padding:38px 24px 90px;
+  }
+  .card{
+    width:100%;
+    max-width:640px;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+  }
+  .kicker{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    font-weight:600;
+    letter-spacing:.06em;
+    color:var(--accent-strong);
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .q-title{
+    font-size:23px;
+    font-weight:700;
+    line-height:1.28;
+    margin-bottom:8px;
+  }
+  .q-help{
+    font-size:13.8px;
+    color:var(--ink-soft);
+    margin-bottom:22px;
+    max-width:60ch;
+  }
+  .note-box{
+    background:var(--accent-tint);
+    border:1px solid var(--accent-tint-line);
+    border-radius:var(--radius-card);
+    padding:14px 16px;
+    font-size:13.3px;
+    color:var(--ink);
+    margin-bottom:18px;
+  }
+  .note-box b{color:var(--brand);}
+
+  .field{margin-bottom:16px;}
+  .field label{
+    display:block;
+    font-size:12.7px;
+    font-weight:600;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  input[type=text], input[type=email], input[type=date], textarea, select{
+    width:100%;
+    background:var(--surface);
+    border:1.5px solid var(--line);
+    border-radius:11px;
+    padding:11px 13px;
+    font-size:14.5px;
+    color:var(--ink);
+    font-family:inherit;
+    resize:vertical;
+  }
+  textarea{min-height:96px;}
+  input:focus, textarea:focus, select:focus{
+    outline:2px solid var(--focus);
+    outline-offset:1px;
+    border-color:var(--focus);
+  }
+  input::placeholder, textarea::placeholder{color:var(--ink-faint);}
+
+  .opt-grid{display:flex;flex-direction:column;gap:9px;}
+  .opt-grid.grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+  @media (max-width:520px){.opt-grid.grid2{grid-template-columns:1fr;}}
+  .opt{
+    display:flex;
+    align-items:center;
+    gap:11px;
+    padding:12px 14px;
+    border:1.5px solid var(--line);
+    border-radius:12px;
+    cursor:pointer;
+    background:var(--surface);
+    font-size:14.3px;
+    color:var(--ink);
+    transition:border-color .12s, background .12s;
+  }
+  .opt:hover{border-color:var(--accent);}
+  .opt .dot{
+    flex:none;width:18px;height:18px;border-radius:999px;
+    border:1.5px solid var(--ink-faint);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .opt.checkbox .dot{border-radius:6px;}
+  .opt .dot i{width:9px;height:9px;border-radius:999px;background:var(--accent-strong);display:none;}
+  .opt.checkbox .dot i{border-radius:2px;}
+  .opt.selected{border-color:var(--accent-strong);background:var(--accent-tint);}
+  .opt.selected .dot{border-color:var(--accent-strong);}
+  .opt.selected .dot i{display:block;}
+
+  .other-row{margin-top:2px;}
+
+  .dyn-list{display:flex;flex-direction:column;gap:12px;margin-bottom:6px;}
+  .dyn-row{
+    border:1.5px solid var(--line);
+    border-radius:13px;
+    padding:14px;
+    position:relative;
+    background:var(--bg-sunken);
+  }
+  .dyn-row .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media (max-width:520px){.dyn-row .grid{grid-template-columns:1fr;}}
+  .dyn-remove{
+    position:absolute;top:10px;right:10px;
+    background:none;border:none;color:var(--ink-faint);
+    cursor:pointer;font-size:16px;line-height:1;padding:4px;
+  }
+  .dyn-remove:hover{color:var(--danger);}
+  .add-row{
+    align-self:flex-start;
+    background:var(--surface-2);
+    border:1.5px dashed var(--line);
+    color:var(--accent-strong);
+    border-radius:11px;
+    padding:9px 14px;
+    font-size:13px;
+    font-weight:600;
+    cursor:pointer;
+    margin-bottom:16px;
+  }
+  .add-row:hover{border-color:var(--accent);}
+
+  .upload-zone{
+    border:1.5px dashed var(--line);
+    border-radius:var(--radius-card);
+    background:var(--bg-sunken);
+    padding:26px 18px;
+    text-align:center;
+    color:var(--ink-soft);
+    font-size:13.3px;
+    margin-bottom:18px;
+  }
+  .upload-zone .ic{font-size:22px;display:block;margin-bottom:6px;}
+  .upload-zone .proto{
+    display:inline-block;margin-top:10px;
+    font-size:11.5px;font-weight:600;
+    color:var(--ink-faint);
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    padding:3px 9px;border-radius:var(--radius-tag);
+  }
+
+  .actions{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    margin-top:26px;
+    gap:12px;
+  }
+  .btn{
+    font-family:inherit;
+    font-size:14px;
+    font-weight:600;
+    border-radius:var(--radius-btn);
+    padding:11px 20px;
+    cursor:pointer;
+    border:1.5px solid transparent;
+    display:inline-flex;align-items:center;gap:8px;
+  }
+  .btn-primary{background:var(--brand);color:var(--brand-on);}
+  .btn-primary:hover{background:var(--brand-deep);}
+  .btn-ghost{background:none;color:var(--ink-soft);border-color:var(--line);}
+  .btn-ghost:hover{border-color:var(--ink-faint);color:var(--ink);}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+  .err-msg{
+    font-size:12.5px;color:var(--danger);margin-top:8px;
+    display:none;
+  }
+  .err-msg.show{display:block;}
+
+  /* ---------- REVIEW ---------- */
+  .review-head{margin-bottom:22px;}
+  .rev-sec{margin-bottom:26px;}
+  .rev-sec h3{
+    font-size:14px;
+    text-transform:uppercase;
+    letter-spacing:.05em;
+    color:var(--brand);
+    border-bottom:1px solid var(--line);
+    padding-bottom:8px;
+    margin-bottom:12px;
+  }
+  .rev-item{
+    display:grid;
+    grid-template-columns:88px 1fr;
+    gap:14px;
+    padding:9px 0;
+    border-bottom:1px solid var(--line-soft);
+    font-size:13.6px;
+  }
+  .rev-item .id{font-family:'IBM Plex Mono',monospace;color:var(--ink-faint);font-size:11.5px;padding-top:2px;}
+  .rev-item .q{color:var(--ink-soft);margin-bottom:2px;}
+  .rev-item .a{color:var(--ink);font-weight:500;white-space:pre-wrap;}
+  .rev-item .a.empty{color:var(--ink-faint);font-weight:400;font-style:italic;}
+  .rev-edit{
+    margin-top:20px;
+    display:inline-flex;
+    font-size:12px;font-weight:600;
+    color:var(--accent-strong);
+    background:none;border:none;cursor:pointer;
+    padding:0;
+  }
+
+  .confirm{
+    background:var(--success-tint);
+    border:1px solid var(--success-line);
+    border-radius:var(--radius-card);
+    padding:22px 22px;
+    margin-top:8px;
+  }
+  .confirm .ic{font-size:26px;}
+  .confirm h3{color:var(--success);font-size:17px;margin:10px 0 6px;}
+  .confirm p{font-size:13.8px;color:var(--ink);margin:0;}
+
+  .progress-strip{
+    display:flex;gap:4px;margin-bottom:26px;
+  }
+  .progress-strip i{
+    height:4px;flex:1;border-radius:99px;background:var(--line);
+  }
+  .progress-strip i.on{background:var(--accent-strong);}
+
+  /* ---------- TIME ESTIMATE / PROGRESS ---------- */
+  .time-estimate{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:12.5px;
+    font-weight:600;
+    color:var(--ink-soft);
+    white-space:nowrap;
+    flex:none;
+  }
+  .time-estimate svg{flex:none;color:var(--accent-strong);}
+  .progress-track{
+    height:4px;
+    border-radius:99px;
+    background:var(--line);
+    overflow:hidden;
+  }
+  .progress-fill{
+    height:100%;
+    width:0%;
+    background:var(--accent-strong);
+    border-radius:99px;
+    transition:width .35s ease;
+  }
+  @media (prefers-reduced-motion: reduce){ .progress-fill{transition:none;} }
+
+  /* ---------- ACCUMULATING FLOW ---------- */
+  .qa-card{
+    background:var(--bg-sunken);
+    border:1px solid var(--line);
+    border-radius:var(--radius-card);
+    padding:15px 18px;
+  }
+  .qa-card-head{
+    display:flex;align-items:flex-start;justify-content:space-between;
+    gap:12px;
+    margin-bottom:6px;
+  }
+  .qa-card-q{
+    font-size:13.6px;
+    font-weight:600;
+    color:var(--ink-soft);
+    line-height:1.4;
+  }
+  .qa-num{
+    color:var(--accent-strong);
+    font-size:11px;
+    font-weight:600;
+    margin-right:8px;
+  }
+  .qa-edit{
+    flex:none;
+    background:none;
+    border:1px solid var(--line);
+    color:var(--ink-soft);
+    border-radius:var(--radius-tag);
+    padding:4px 11px;
+    font-size:11.5px;
+    font-weight:600;
+    cursor:pointer;
+  }
+  .qa-edit:hover{border-color:var(--accent);color:var(--accent-strong);background:var(--accent-tint);}
+  .qa-a{
+    font-size:14.3px;
+    color:var(--ink);
+    font-weight:500;
+    white-space:pre-wrap;
+  }
+  .qa-a.empty{color:var(--ink-faint);font-weight:400;font-style:italic;}
+  .qa-note{
+    background:var(--accent-tint);
+    border:1px solid var(--accent-tint-line);
+    border-radius:var(--radius-card);
+    padding:12px 16px;
+    font-size:12.8px;
+    color:var(--ink-soft);
+  }
+  .qa-note b{color:var(--brand);}
+  .qa-active{
+    background:var(--surface);
+    border:1.5px solid var(--line);
+    border-radius:var(--radius-card);
+    box-shadow:var(--shadow);
+    padding:28px 28px 26px;
+    scroll-margin-top:110px;
+  }
+</style>
+
+<div class="app" id="app">
+  <aside class="rail" id="rail">
+    <div class="rail-brand">
+      <div class="mark">Enap · ASCOM/CGCO</div>
+      <div class="sub">Briefing de Comunicação Institucional</div>
+    </div>
+    <nav class="rail-sections" id="railSections"></nav>
+    <div class="rail-foot">
+      Fluxo com lógica condicional — perguntas irrelevantes para o seu caso são puladas automaticamente, como no formulário original.
+      <br><button class="rail-reset" id="resetBtn" type="button">Reiniciar fluxo</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-top">
+        <div class="crumbs">
+          <button class="mobile-toggle" id="mobileToggle" type="button">Seções</button>
+          <span id="crumbSection">Seção 1</span>
+          <span class="badge" id="crumbBadge">—</span>
+        </div>
+        <div class="time-estimate">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
+          <span id="timeEstimate">calculando…</span>
+        </div>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <div class="stage">
+      <div class="card" id="card"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+
+  var GROUPS = [
+    {name:'Presidência', areas:['Assessoria','Auditoria','Corregedoria','Ouvidoria','Procuradoria','Coordenação-Geral de Imagem Institucional','Coordenação-Geral de Comunicação Institucional']},
+    {name:'Diretoria Executiva', areas:['Coordenação-Geral de Articulação Institucional','Coordenação-Geral de Estratégia Institucional','Coordenação-Geral de Governança Institucional']},
+    {name:'Diretoria de Gestão Corporativa', areas:['Coordenação-Geral de Logística e Contratos','Coordenação-Geral de Orçamento e Finanças','Coordenação-Geral de Gestão de Pessoas','Coordenação-Geral de Tecnologia da Informação','Coordenação-Geral de Parcerias Colaborativas']},
+    {name:'Diretoria de Altos Estudos', areas:['Coordenação-Geral de Pesquisa','Coordenação-Geral de Ciências de Dados','Coordenação-Geral de Avaliação e Organização de Evidências']},
+    {name:'Diretoria de Desenvolvimento Profissional', areas:['Coordenação-Geral de Gestão de Diretrizes de Aprendizagem e Ensino','Coordenação-Geral de Experiências de Aprendizagens Assíncronas','Coordenação-Geral de Desenvolvimento e Execução de Experiências de Aprendizagem Síncronas','Coordenação-Geral de Pós-Graduação Stricto Sensu']},
+    {name:'Diretoria de Inovação', areas:['Coordenação-Geral de Gestão do Conhecimento e Comunidades para Inovação','Coordenação-Geral de Inovação Aberta','Coordenação-Geral do Laboratório de Inovação em Governo']},
+    {name:'Diretoria de Educação Executiva', areas:['Coordenação-Geral de Especialização e MBA','Coordenação-Geral de Desenvolvimento de Altas Lideranças','Coordenação-Geral de Aperfeiçoamento para Carreiras','Coordenação-Geral de Formação Inicial de Carreiras']},
+    {name:'Diretoria de Concursos Públicos', areas:['Coordenação-Geral de Concursos Públicos','Coordenação-Geral de Monitoramento e Integração Logística']}
+  ];
+
+  var SECTIONS = [
+    {n:1, name:'Área demandante', desc:'Quem está solicitando'},
+    {n:2, name:'Projeto', desc:'Objetivo, públicos e prazos'},
+    {n:3, name:'Jornalismo', desc:'Atendimento de imprensa'},
+    {n:4, name:'Criação / Interna', desc:'Peças e comunicação interna'},
+    {n:5, name:'Redes / Audiovisual', desc:'Digital e audiovisual'}
+  ];
+
+  function opt(label, value, next){ return {label:label, value:value, next:next}; }
+
+  // ---------- STEP DEFINITIONS ----------
+  var STEPS = {};
+  function add(s){ STEPS[s.id] = s; }
+
+  add({id:'area', section:1, num:'Seção 1', title:'Quem está fazendo esta demanda?', help:'Selecione a diretoria/presidência e a área específica, e informe o responsável pelo atendimento.', type:'area', required:true, next:function(){return 'p1';}});
+
+  // ---- SEÇÃO 2 · PROJETO ----
+  add({id:'p1', section:2, num:'1', title:'Qual é o nome do projeto, programa, ação ou iniciativa?', type:'text', placeholder:'Ex.: Prêmio Enap de Inovação 2027', required:true, next:'p1-1'});
+
+  add({id:'p1-1', section:2, num:'1.1', title:'A demanda refere-se a um projeto novo ou a um projeto já existente?', type:'radio', required:true,
+    options:[ opt('Novo projeto','novo','p2'), opt('Projeto existente','existente','p1-2'), opt('Continuidade ou nova edição de projeto existente','continuidade','p1-2') ] });
+
+  add({id:'p1-2', section:2, num:'1.2', title:'Devemos seguir a identidade visual criada anteriormente para o projeto?', type:'radio', required:true,
+    options:[ opt('Sim','sim'), opt('Não','nao') ], next:'p1-3' });
+
+  add({id:'p1-3', section:2, num:'1.3', title:'Informe o nome e o ano ou período em que foi desenvolvido ou realizado pela última vez.', type:'text', placeholder:'Ex.: Prêmio Enap 2025', next:'p1-4'});
+
+  add({id:'p1-4', section:2, num:'1.4', title:'Em quais canais o projeto já foi divulgado?', help:'Informe os canais utilizados e, se possível, os respectivos links.', type:'textarea', next:'p1-5'});
+
+  add({id:'p1-5', section:2, num:'1.5', title:'Quais peças ou produtos de comunicação foram desenvolvidos anteriormente?', type:'textarea', next:'p2'});
+
+  add({id:'p2', section:2, num:'2', title:'Apresente um breve resumo do projeto.', help:'O que é, sua finalidade, principais atividades e, se pertinente, relação com outras iniciativas da Enap.', type:'textarea', required:true, next:'p3'});
+
+  add({id:'p3', section:2, num:'3', title:'Quais são os principais objetivos do projeto?', type:'textarea', required:true, next:'p4'});
+
+  add({id:'p4', section:2, num:'4', title:'Quais são os principais marcos do projeto e suas respectivas datas?', help:'Datas que possam impactar o planejamento, como abertura de edital, inscrições, divulgação de resultados, eventos etc.', type:'dynamic-list',
+    fields:[{key:'marco',label:'Marco',placeholder:'Ex.: Abertura das inscrições'},{key:'data',label:'Data',placeholder:'Ex.: 15/09/2026'}], addLabel:'Adicionar marco', next:'p5'});
+
+  add({id:'p5', section:2, num:'5', title:'Quem são os públicos prioritários do projeto?', type:'textarea', required:true, next:'p6'});
+
+  add({id:'p6', section:2, num:'6', title:'Quais as principais características desses públicos?', help:'Perfil profissional, gênero, raça, localização geográfica, interesses, necessidades, comportamento etc.', type:'textarea', next:'p7'});
+
+  add({id:'p7', section:2, num:'7', title:'Quais links deverão ser disponibilizados na comunicação?', help:'Inscrições, submissão de propostas, participação em atividades etc. Se houver mais de um, indique a finalidade de cada um.', type:'textarea', next:'p8'});
+
+  add({id:'p8', section:2, num:'8', title:'As peças de comunicação deverão priorizar imagens dos participantes do projeto (especialistas, docentes, palestrantes)?', type:'radio', required:true,
+    options:[ opt('Sim','sim','p8-1'), opt('Não','nao','p9') ] });
+
+  add({id:'p8-1', section:2, num:'8.1', title:'Quais participantes deverão ser priorizados?', type:'dynamic-list',
+    fields:[{key:'nome',label:'Nome'},{key:'cargo',label:'Cargo'},{key:'orgao',label:'Órgão/instituição'},{key:'bio',label:'Mini bio', area:true}], addLabel:'Adicionar participante', next:'p8-2'});
+
+  add({id:'p8-2', section:2, num:'8.2', title:'Anexe as fotos dos participantes em alta qualidade.', type:'upload', next:'p9'});
+
+  add({id:'p9', section:2, num:'9', title:'O projeto envolve capacitação, curso, oficina, formação ou outra atividade educacional?', type:'radio', required:true,
+    options:[ opt('Sim','sim','p9-1'), opt('Não','nao','p10') ] });
+
+  add({id:'p9-1', section:2, num:'9.1', title:'Serão disponibilizados materiais de apoio que deverão ser produzidos pela equipe de comunicação?', type:'radio', required:true,
+    options:[ opt('Sim','sim','p9-2'), opt('Não','nao','p10') ] });
+
+  add({id:'p9-2', section:2, num:'9.2', title:'Quais materiais?', type:'checkbox', other:true,
+    options:[opt('Crachá','cracha'),opt('Certificado','certificado'),opt('Projeto Pedagógico','projeto-pedagogico'),opt('Guia/Manual do Aluno','guia-manual'),opt('Impressão colorida A4','impressao-a4'),opt('Impressão colorida A3','impressao-a3')], next:'p9-3'});
+
+  add({id:'p9-3', section:2, num:'9.3', title:'Os materiais selecionados exigirão revisão de conteúdo e/ou diagramação pela equipe de Comunicação?', type:'radio', required:true,
+    options:[ opt('Sim','sim','p9-4'), opt('Não','nao','p10') ] });
+
+  add({id:'p9-4', section:2, num:'9.4', title:'Anexe os arquivos em sua versão final para revisão e/ou diagramação.', help:'IMPORTANTE: os serviços de revisão e diagramação exigem, no mínimo, de 5 a 10 dias úteis para a entrega da primeira versão. Envie os arquivos com antecedência.', type:'upload', next:'p10'});
+
+  add({id:'p10', section:2, num:'10', title:'O projeto terá participação ou envolvimento de instituições parceiras?', type:'radio', required:true,
+    options:[ opt('Sim','sim','p10-1'), opt('Não','nao','p11') ] });
+
+  add({id:'p10-1', section:2, num:'10.1', title:'Quais são os parceiros envolvidos e qual o tipo de participação de cada um?', help:'Realização, apoio, patrocínio, parceria institucional etc. Informe também outras questões relevantes que possam impactar o trabalho da Comunicação.', type:'textarea', required:true, next:'p10-2'});
+
+  add({id:'p10-2', section:2, num:'10.2', title:'Quem será responsável pelo desenvolvimento do conteúdo de comunicação e divulgação do projeto?', type:'radio', required:true,
+    options:[ opt('Enap','enap','p10-3'), opt('Parceiro','parceiro','p10-4'), opt('Ambos','ambos','p10-3') ] });
+
+  add({id:'p10-3', section:2, num:'10.3', title:'Anexe as logomarcas e os manuais de marca dos parceiros.', help:'Devem estar na régua de logos ou nas peças que serão produzidas pela Enap.', type:'upload', next:'p10-5'});
+
+  add({id:'p10-4', section:2, num:'10.4', title:'Informe o nome e o e-mail do profissional da instituição parceira responsável pela produção das peças.', help:'Esse contato receberá as logomarcas da Enap, o brandbook e/ou demais elementos de identidade visual. O responsável pelo projeto será copiado em todos os e-mails trocados com as áreas de comunicação dos parceiros.', type:'text', placeholder:'Nome — e-mail', next:'p10-5'});
+
+  add({id:'p10-5', section:2, num:'10.5', title:'As peças de comunicação produzidas pela Enap precisarão ser aprovadas pelos parceiros?', type:'radio', required:true,
+    options:[ opt('Sim','sim','p10-5-1'), opt('Não','nao','p11') ] });
+
+  add({id:'p10-5-1', section:2, num:'10.5.1', title:'Observação', type:'note', help:'A área demandante será responsável por conduzir e acompanhar o processo de aprovação junto aos parceiros. Consulte a equipe de atendimento da CGCO/ASCOM sobre os prazos de validação para evitar impactos no cronograma.', next:'p11'});
+
+  add({id:'p11', section:2, num:'11', title:'Quais canais oficiais devem ser priorizados para a divulgação do projeto?', type:'checkbox',
+    options:[opt('Portal da Enap / Sites de Projetos','portal'),opt('Redes Sociais — Instagram/Facebook','ig-fb'),opt('Redes Sociais — LinkedIn','linkedin'),opt('Redes Sociais — YouTube','youtube'),opt('Redes Sociais — WhatsApp','whatsapp'),opt('SouGov','sougov'),opt('Assessoria de imprensa','imprensa'),opt('Comunicação Interna — RedeSouEnap','souenap'),opt('Comunicação Interna — E-mail','email-interno'),opt('Comunicação Interna — Fundo de tela (Computadores)','fundo-pc'),opt('Comunicação Interna — Fundo de tela (TVs)','fundo-tv'),opt('E-mail Marketing — Mailings da Enap','email-marketing')],
+    next:function(ans){ var v=ans&&ans.values||[]; return v.indexOf('email-marketing')>-1 ? 'p11-1' : 'p12'; } });
+
+  add({id:'p11-1', section:2, num:'11.1', title:'Compartilhe o mailing específico do projeto, se sua área possuir um.', help:'Isso viabiliza o envio de informações por e-mail pela equipe de ASCOM/CGCO.', type:'text', next:'p12'});
+
+  add({id:'p12', section:2, num:'12', title:'Indique os formatos prioritários para a divulgação do seu projeto.', help:'As opções serão avaliadas e validadas na reunião de alinhamento com o atendimento da ASCOM/CGCO.', type:'textarea', next:'p13'});
+
+  add({id:'p13', section:2, num:'13', title:'Sentiu falta de alguma informação importante, ou possui algum material relevante para o nosso trabalho?', type:'textarea', next:'j11'});
+
+  // ---- SEÇÃO 3 · JORNALISMO ----
+  var J_DETAIL = {
+    'entrevista':'j11-1', 'release-texto':'j11-2', 'release-disparo':'j11-2', 'release-relatorio':'j11-2',
+    'assessoria':'j11-3', 'media-training':'j11-4', 'acompanhamento':'j11-5', 'clipping':'j11-6', 'cobertura':'j11-7'
+  };
+  function nextFromQueue(ans, state){ return state.queue.length ? state.queue.shift() : 'c12'; }
+
+  add({id:'j11', section:3, num:'11', title:'Quais produtos e/ou serviços deverão ser desenvolvidos pela Equipe de Jornalismo?', type:'checkbox',
+    options:[opt('Matéria jornalística','materia'),opt('Entrevista','entrevista'),opt('Adaptação de conteúdo para outras mídias','adaptacao'),opt('Roteiro — Entrevista','roteiro-entrevista'),opt('Roteiro — Vídeo','roteiro-video'),opt('Roteiro — Podcast','roteiro-podcast'),opt('Roteiro — Videocast','roteiro-videocast'),opt('Release — Texto','release-texto'),opt('Release — Disparo','release-disparo'),opt('Release — Relatório de Resultados','release-relatorio'),opt('Assessoria de imprensa','assessoria'),opt('Media training','media-training'),opt('Acompanhamento de entrevista','acompanhamento'),opt('Clipping','clipping'),opt('Revisão textual','revisao-textual'),opt('Revisão audiovisual','revisao-audiovisual'),opt('Cobertura jornalística','cobertura')],
+    next:function(ans, state){
+      var chosen = (ans&&ans.values)||[];
+      var seen={}, q=[];
+      chosen.forEach(function(v){ var d=J_DETAIL[v]; if(d && !seen[d]){ seen[d]=1; q.push(d); } });
+      state.queue = q;
+      return nextFromQueue(ans, state);
+    }});
+
+  add({id:'j11-1', section:3, num:'11.1', title:'Entrevista — quem deverá ser entrevistado e em que momento?', help:'Informe nome completo, cargo/função, órgão/instituição, área de atuação ou especialidade, e e-mail/telefone de contato. Indique também se a entrevista será antes, durante ou depois do projeto.', type:'textarea', next:nextFromQueue});
+
+  add({id:'j11-2', section:3, num:'11.2', title:'Release — para quais nichos, áreas de especialidade ou segmentos de imprensa os releases deverão ser enviados?', type:'textarea', next:nextFromQueue});
+
+  add({id:'j11-3', section:3, num:'11.3', title:'Assessoria de imprensa — será necessário enviar um aviso de pauta convidando jornalistas para a cobertura?', help:'Não esqueça de informar a área de Eventos, para providenciar credenciamento de imprensa, área reservada para jornalistas e estrutura para entrevistas (quebra-queixo).', type:'radio', options:[opt('Sim','sim'),opt('Não','nao')], next:nextFromQueue});
+
+  add({id:'j11-4', section:3, num:'11.4', title:'Media training — será necessário preparar os porta-vozes do projeto para entrevistas e contatos com a imprensa?', type:'radio', required:true,
+    options:[ opt('Sim','sim','j11-4-1'), opt('Não','nao', nextFromQueue) ] });
+
+  add({id:'j11-4-1', section:3, num:'11.4.1', title:'Quem serão os porta-vozes?', help:'Entre em contato com o seu atendimento da ASCOM para agendar o media training com antecedência.', type:'textarea', next:nextFromQueue});
+
+  add({id:'j11-5', section:3, num:'11.5', title:'Acompanhamento de entrevista — quem será o entrevistado (porta-voz da Enap)?', help:'Indique nome, cargo/função, data, veículo de comunicação, o tema que será abordado e, se possível, a previsão de publicação.', type:'textarea', next:nextFromQueue});
+
+  add({id:'j11-6', section:3, num:'11.6', title:'Clipping — qual o tema e o período de abrangência?', type:'textarea', next:nextFromQueue});
+
+  add({id:'j11-7', section:3, num:'11.7.1', title:'Cobertura jornalística — nome, data e horário do evento.', type:'text', next:'j11-7-2'});
+  add({id:'j11-7-2', section:3, num:'11.7.2', title:'Quais os principais objetivos do evento?', type:'textarea', next:'j11-7-3'});
+  add({id:'j11-7-3', section:3, num:'11.7.3', title:'Quem será o responsável pela condução do evento?', help:'Indique nome e e-mail de contato da pessoa responsável da área demandante.', type:'text', next:'j11-7-4'});
+  add({id:'j11-7-4', section:3, num:'11.7.4', title:'Quem participará da abertura ou de momentos específicos que deverão ser acompanhados pela Comunicação?', help:'Representantes da Enap e convidados.', type:'dynamic-list',
+    fields:[{key:'nome',label:'Nome completo'},{key:'cargo',label:'Cargo'},{key:'orgao',label:'Órgão/instituição'},{key:'momento',label:'Momento do evento'},{key:'bio',label:'Mini bio', area:true}], addLabel:'Adicionar participante', next:'j11-7-5'});
+  add({id:'j11-7-5', section:3, num:'11.7.5', title:'O evento terá transmissão ao vivo?', type:'radio', required:true,
+    options:[ opt('Sim','sim','j11-7-5-1'), opt('Não','nao','j11-7-6') ] });
+  add({id:'j11-7-5-1', section:3, num:'11.7.5.1', title:'Qual o link do evento?', type:'text', next:'j11-7-6'});
+  add({id:'j11-7-6', section:3, num:'11.7.6', title:'O evento será on-line ou presencial?', type:'radio', required:true,
+    options:[ opt('On-line','online', nextFromQueue), opt('Presencial','presencial','j11-7-7') ] });
+  add({id:'j11-7-7', section:3, num:'11.7.7', title:'Onde o evento será realizado?', type:'radio', required:true,
+    options:[ opt('Enap','enap','j11-7-7-1'), opt('Espaço de terceiros','terceiros','j11-7-7-2') ] });
+  add({id:'j11-7-7-1', section:3, num:'11.7.7.1', title:'Em qual espaço da Enap?', type:'text', next:'j11-7-7-3'});
+  add({id:'j11-7-7-2', section:3, num:'11.7.7.2', title:'Qual o endereço?', type:'text', next:'j11-7-7-3'});
+  add({id:'j11-7-7-3', section:3, num:'11.7.7.3', title:'Será necessário fazer o credenciamento antecipado das equipes de cobertura da Enap?', type:'radio', required:true,
+    options:[ opt('Sim','sim','j11-7-7-3-1'), opt('Não','nao', nextFromQueue) ] });
+  add({id:'j11-7-7-3-1', section:3, num:'11.7.7.3.1', title:'Com quem devemos falar para realizar o credenciamento?', help:'Indique nome, e-mail e telefone.', type:'text', next:nextFromQueue});
+
+  // ---- SEÇÃO 4 · CRIAÇÃO / COMUNICAÇÃO INTERNA ----
+  add({id:'c12', section:4, num:'12', title:'Sobre a identidade visual do projeto (IDV), há orientações, restrições ou elementos a considerar?', type:'textarea', next:'c12-1'});
+  add({id:'c12-1', section:4, num:'12.1', title:'Indique referências de peças, campanhas, projetos ou sites que possam inspirar a criação.', type:'textarea', next:'c12-2'});
+  add({id:'c12-2', section:4, num:'12.2', title:'O projeto faz parte de algum programa ou iniciativa da Enap (FIF, FIAR, FIC, Altas Lideranças, LIIA etc.)?', type:'radio', required:true,
+    options:[ opt('Sim','sim','c12-2a'), opt('Não','nao','c13-digital') ] });
+  add({id:'c12-2a', section:4, num:'12.2', title:'Quais logomarcas, além da marca institucional da Enap, deverão ser incluídas nas peças?', type:'text', next:'c13-digital'});
+
+  add({id:'c13-digital', section:4, num:'13.1', title:'Produtos digitais — quais deverão ser desenvolvidos pela Equipe de Criação?', type:'checkbox',
+    options:[opt('Key Visual','key-visual'),opt('Mockup','mockup'),opt('Criação de IDV','criacao-idv'),opt('Adaptação de IDV','adaptacao-idv'),opt('Ilustração','ilustracao'),opt('Personagem/Mascote','mascote'),opt('Papel timbrado','papel-timbrado'),opt('Apresentação — Formatação (PPT/Canva)','apres-formatacao'),opt('Apresentação — Roteirização','apres-roteirizacao'),opt('Apresentação — Template (PPT/Canva)','apres-template'),opt('Infográfico — Site','infografico-site'),opt('Infográfico — Redes Sociais','infografico-redes'),opt('Site — Home','site-home'),opt('Site — Interna','site-interna'),opt('Site — Mobile','site-mobile'),opt('Forms — Testeira','forms-testeira')],
+    next:'c13-impressos'});
+  add({id:'c13-impressos', section:4, num:'13.2', title:'Produtos impressos / brindes — quais são necessários?', type:'checkbox',
+    options:[opt('Adesivo (até 50x50cm)','adesivo'),opt('Agenda','agenda'),opt('Bandeira/Flâmula','bandeira'),opt('Bottom/Pin metálico','bottom'),opt('Bloco de anotações','bloco'),opt('Caderno A5/A4','caderno'),opt('Moleskine','moleskine'),opt('Calendário de parede','calendario'),opt('Caneta/Lápis','caneta'),opt('Certificado/Diploma','certificado'),opt('Copo/Caneca/Squeeze','copo'),opt('Cubo/Totem','cubo'),opt('Ecobag','ecobag'),opt('Etiqueta/Tag','etiqueta'),opt('Marcador de página','marcador'),opt('Mouse pad','mousepad'),opt('Necessaire','necessaire'),opt('Placa comemorativa','placa-comemorativa'),opt('Troféu','trofeu'),opt('Placa de mesa','placa-mesa')],
+    next:'c13-editoracao'});
+  add({id:'c13-editoracao', section:4, num:'13.3', title:'Editoração — quais serviços são necessários?', type:'checkbox',
+    options:[opt('Revisão PP (até 40 laudas)','rev-pp'),opt('Revisão P (41–80 laudas)','rev-p'),opt('Revisão M (81–140 laudas)','rev-m'),opt('Revisão G (acima de 141 laudas)','rev-g'),opt('Revisão PP — Inglês','rev-pp-en'),opt('Revisão P — Inglês','rev-p-en'),opt('Revisão M — Inglês','rev-m-en'),opt('Revisão G — Inglês','rev-g-en'),opt('Criação de IDV','ed-criacao-idv'),opt('Adaptação de IDV','ed-adaptacao-idv'),opt('Criação de Projeto Gráfico','criacao-projeto-grafico'),opt('Adaptação de Projeto Gráfico','adaptacao-projeto-grafico'),opt('Guia de Estilo Editorial','guia-estilo'),opt('Capa — projeto único','capa-unica'),opt('Capa — para coleção','capa-colecao'),opt('Diagramação Livro/Caderno PP (até 15 pág.)','diag-livro-pp'),opt('Diagramação Livro/Caderno P (16–50 pág.)','diag-livro-p'),opt('Diagramação Livro/Caderno M (51–100 pág.)','diag-livro-m'),opt('Diagramação Livro/Caderno G (100+ pág.)','diag-livro-g'),opt('Diagramação Revista/Relatório/Guia P (até 25 pág.)','diag-rev-p'),opt('Diagramação Revista/Relatório/Guia M (26–50 pág.)','diag-rev-m'),opt('Diagramação Revista/Relatório/Guia G (50+ pág.)','diag-rev-g'),opt('Diagramação Folheto/Folder','diag-folheto')],
+    next:'c13-comvisual'});
+  add({id:'c13-comvisual', section:4, num:'13.4', title:'Comunicação visual — quais peças são necessárias?', type:'checkbox',
+    options:[opt('Adesivo sinalização','adesivo-sinal'),opt('Adesivo campanha','adesivo-campanha'),opt('Backdrop/fundo de palco','backdrop'),opt('Banner/Wind banner','banner'),opt('Painel fotográfico','painel'),opt('Placa (obra/sinalização)','placa-obra')],
+    next:'c13-outros'});
+  add({id:'c13-outros', section:4, num:'13.5', title:'Outros produtos ou serviços da Equipe de Criação?', type:'textarea', next:'c14-planejamento'});
+
+  add({id:'c14-planejamento', section:4, num:'14.1', title:'Comunicação Interna — planejamento: quais itens são necessários?', type:'checkbox',
+    options:[opt('Campanha estratégica P — ação pontual','camp-p'),opt('Campanha estratégica M — até 6 meses','camp-m'),opt('Campanha estratégica G — anual','camp-g'),opt('Cronograma de publicações','cronograma'),opt('Slogan/Tagline','slogan'),opt('Relatório de Resultados — Campanha','rel-campanha'),opt('Relatório de Resultados — Rede SouEnap','rel-souenap')],
+    next:'c14-souenap'});
+  add({id:'c14-souenap', section:4, num:'14.2', title:'Rede SouEnap (Engage) — quais produtos são necessários?', type:'checkbox',
+    options:[opt('Comunicado — Texto','com-texto'),opt('Comunicado — Card','com-card'),opt('Cobertura de eventos (audiovisual)','cobertura-av'),opt('Cobertura de eventos (texto)','cobertura-texto'),opt('Cobertura fotográfica','cobertura-foto'),opt('Criação de comunidade','criacao-comunidade'),opt('Monitoramento de comunidade','monitoramento-comunidade')],
+    next:'c14-telas'});
+  add({id:'c14-telas', section:4, num:'14.3', title:'Telas — quais são necessárias?', type:'checkbox',
+    options:[opt('Auditório — Telão','telao'),opt('Auditório — Telas laterais','telas-laterais'),opt('Computadores — Fundo de tela único','fundo-unico'),opt('Computadores — Fundo de tela IDV','fundo-idv')],
+    next:'c14-pesquisas'});
+  add({id:'c14-pesquisas', section:4, num:'14.4', title:'Pesquisas — quais são necessárias?', type:'checkbox',
+    options:[opt('Pesquisa de opinião','pesquisa-opiniao'),opt('Pesquisa de satisfação','pesquisa-satisfacao')],
+    next:'c14-outros'});
+  add({id:'c14-outros', section:4, num:'14.5', title:'Outros produtos ou serviços de Comunicação Interna?', type:'textarea', next:'r15-planejamento'});
+
+  // ---- SEÇÃO 5 · REDES SOCIAIS / AUDIOVISUAL ----
+  add({id:'r15-planejamento', section:5, num:'15.1', title:'Redes Sociais/Audiovisual — planejamento: quais itens são necessários?', type:'checkbox',
+    options:[opt('Campanha PP','camp-pp'),opt('Campanha P','camp-p'),opt('Campanha M','camp-m'),opt('Campanha G','camp-g'),opt('Cronograma de publicações','cronograma'),opt('Slogan/Tagline','slogan'),opt('Instagram/Facebook — Relatório de Resultados','rel-ig-fb'),opt('LinkedIn — Relatório de Resultados','rel-linkedin'),opt('YouTube — Relatório de Resultados','rel-youtube'),opt('Spotify — Relatório de Resultados','rel-spotify'),opt('E-mail Marketing — Relatório de Resultados','rel-email'),opt('Flickr — Relatório de Resultados','rel-flickr'),opt('Relatório de Resultados — Campanha','rel-campanha'),opt('Relatório de Resultados — Anual','rel-anual')],
+    next:'r15-redes'});
+  add({id:'r15-redes', section:5, num:'15.2', title:'Redes Sociais — quais peças são necessárias?', type:'checkbox',
+    options:[opt('Instagram — Avatar','ig-avatar'),opt('Instagram — Destaque','ig-destaque'),opt('Instagram/Facebook — Post Card','post-card'),opt('Instagram/Facebook — Post Foto','post-foto'),opt('Instagram/Facebook — Carrossel Cards','carrossel-cards'),opt('Instagram/Facebook — Carrossel Fotos','carrossel-fotos'),opt('Reels — Capa','reels-capa'),opt('Reels — Vídeo','reels-video'),opt('Stories','stories'),opt('Stories — Moldura','stories-moldura'),opt('Stories — Enquete','stories-enquete'),opt('Stories — Cobertura','stories-cobertura'),opt('Instagram — Sticker','sticker'),opt('Instagram — Collab/Repost','collab'),opt('Instagram — Trends Vídeo','trends-video'),opt('Instagram — Trends Card','trends-card'),opt('Facebook — Capa','fb-capa'),opt('LinkedIn — Avatar','li-avatar'),opt('LinkedIn — Capa','li-capa'),opt('LinkedIn — Banner','li-banner'),opt('LinkedIn — Post Card','li-post-card'),opt('LinkedIn — Carrossel/PDF','li-carrossel'),opt('LinkedIn — Post Fotos','li-post-fotos'),opt('LinkedIn — Vídeo','li-video'),opt('YouTube — Avatar','yt-avatar'),opt('YouTube — Banner','yt-banner'),opt('YouTube — Thumbnail','yt-thumb'),opt('YouTube — Upload','yt-upload'),opt('YouTube — Playlist','yt-playlist'),opt('Spotify — Banner','sp-banner'),opt('Spotify — Avatar','sp-avatar'),opt('Spotify — Thumbnail','sp-thumb'),opt('Spotify — Upload','sp-upload'),opt('Spotify — Playlist','sp-playlist'),opt('SouGov — Card','sg-card'),opt('SouGov — Texto','sg-texto'),opt('WhatsApp — Card','wa-card'),opt('WhatsApp — Texto','wa-texto'),opt('E-mail Marketing — Cabeçalho','em-cabecalho'),opt('E-mail Marketing — Conteúdo','em-conteudo'),opt('E-mail Marketing — Disparo','em-disparo')],
+    next:'r15-audiovisual'});
+  add({id:'r15-audiovisual', section:5, num:'15.3', title:'Audiovisual — quais peças são necessárias?', type:'checkbox',
+    options:[opt('Vídeo — Campanha','v-campanha'),opt('Vídeo — Tutorial','v-tutorial'),opt('Vídeo — Videocast','v-videocast'),opt('Vídeo — Entrevista','v-entrevista'),opt('Vídeo — After movie','v-aftermovie'),opt('Vídeo — Motion design','v-motion'),opt('Vídeo — Roteiro Original','v-roteiro-original'),opt('Vídeo — Roteiro Adaptado','v-roteiro-adaptado'),opt('Vídeo — Captação de imagens','v-captacao'),opt('Vídeo — Roteirização','v-roteirizacao'),opt('Vídeo — Lettering','v-lettering'),opt('Vídeo — Edição','v-edicao'),opt('Áudio — Podcast (Roteiro)','a-podcast-roteiro'),opt('Áudio — Podcast (Captação)','a-podcast-captacao'),opt('Fotos — Retrato','f-retrato'),opt('Fotos — Institucional','f-institucional'),opt('Fotos — Cobertura fotográfica','f-cobertura'),opt('Fotos — Tratamento e colorização','f-tratamento'),opt('Fotos — Flickr (Álbum)','f-flickr')],
+    next:'r15-outros'});
+  add({id:'r15-outros', section:5, num:'15.4', title:'Outros produtos ou serviços de Redes Sociais/Audiovisual?', type:'textarea', next:'review'});
+
+  // ---------- ENGINE ----------
+  var state = { current:'area', answers:{}, history:[], queue:[], submitted:false };
+
+  function saveState(){ try{ sessionStorage.setItem('briefing-ascom-v1', JSON.stringify({answers:state.answers, history:state.history, current:state.current, queue:state.queue, submitted:state.submitted})); }catch(e){} updateProgressUI(); }
+  function loadState(){ try{ var raw=sessionStorage.getItem('briefing-ascom-v1'); if(raw){ var d=JSON.parse(raw); state.answers=d.answers||{}; state.history=d.history||[]; state.current=d.current||'area'; state.queue=d.queue||[]; state.submitted=d.submitted||false; } }catch(e){} }
+
+  function esc(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];}); }
+
+  function resolveNext(step, ans){
+    var n = step.next;
+    if(typeof n === 'function') return n(ans, state);
+    return n;
+  }
+
+  function computeOptionNext(step, value){
+    var o = (step.options||[]).filter(function(o){return o.value===value;})[0];
+    if(o && o.next!==undefined){
+      if(typeof o.next === 'function') return o.next(null, state);
+      return o.next;
+    }
+    return null;
+  }
+
+  function goTo(id){
+    if(state.current) state.history.push(state.current);
+    state.current = id;
+    saveState();
+    renderFlow();
+  }
+
+  // Rewind the flow back to a given (already-answered) step so it can be edited.
+  // Everything answered after it is dropped from the visible trail — but not erased from
+  // state.answers, so retracing the same path later restores what was typed.
+  function rewindTo(id){
+    var idx = state.history.indexOf(id);
+    if(idx===-1) return;
+    state.history = state.history.slice(0, idx);
+    state.current = id;
+    state.submitted = false;
+    saveState();
+    renderFlow();
+  }
+
+  function goBack(){
+    if(!state.history.length) return;
+    rewindTo(state.history[state.history.length-1]);
+  }
+
+  function isAnswered(step, ans){
+    if(step.type==='text' || step.type==='textarea') return !!(ans && String(ans).trim());
+    if(step.type==='radio') return !!(ans && ans.value!==undefined);
+    if(step.type==='checkbox') return !!(ans && ans.values && ans.values.length>0);
+    if(step.type==='dynamic-list') return !!(ans && ans.length>0);
+    if(step.type==='area') return !!(ans && ans.group && ans.area && ans.nome && ans.email);
+    return true;
+  }
+
+  function advance(){
+    var step = STEPS[state.current];
+    if(!step) return;
+    var ans = state.answers[step.id];
+    if(step.required && !isAnswered(step, ans)){
+      showError(true); return;
+    }
+    showError(false);
+    var next;
+    if(step.type==='radio' && ans && ans.value!==undefined){
+      next = computeOptionNext(step, ans.value);
+      if(next===null) next = resolveNext(step, ans);
+    } else {
+      next = resolveNext(step, ans);
+    }
+    if(!next){ console.warn('Sem próximo passo definido para', step.id); return; }
+    goTo(next);
+  }
+
+  function showError(on){
+    var el = document.getElementById('errMsg');
+    if(el) el.classList.toggle('show', !!on);
+  }
+
+  // ---------- RENDER: RAIL ----------
+  function renderRail(){
+    var wrap = document.getElementById('railSections');
+    var step = STEPS[state.current];
+    var curSection = state.current==='review' ? 6 : (step ? step.section : 1);
+    wrap.innerHTML = SECTIONS.map(function(s){
+      var cls = 'rail-sec' + (s.n===curSection?' active':'') + (s.n<curSection?' done':'');
+      return '<div class="'+cls+'"><div class="num">'+(s.n<curSection?'✓':s.n)+'</div><div class="txt"><div class="name">'+esc(s.name)+'</div><div class="desc">'+esc(s.desc)+'</div></div></div>';
+    }).join('');
+  }
+
+  // ---------- RENDER: FIELD TYPES ----------
+  function renderOptions(step, multi){
+    var ans = state.answers[step.id] || (multi?{values:[]}:{});
+    var html = '<div class="opt-grid">';
+    (step.options||[]).forEach(function(o, i){
+      var selected = multi ? (ans.values||[]).indexOf(o.value)>-1 : ans.value===o.value;
+      html += '<label class="opt'+(multi?' checkbox':'')+(selected?' selected':'')+'" data-val="'+esc(o.value)+'">'+
+        '<span class="dot"><i></i></span><span>'+esc(o.label)+'</span></label>';
+    });
+    html += '</div>';
+    if(step.other){
+      var otherVal = ans.other || '';
+      html += '<div class="field other-row"><label>Outros</label><input type="text" id="otherInput" placeholder="Especifique" value="'+esc(otherVal)+'"></div>';
+    }
+    return html;
+  }
+
+  function renderDynList(step){
+    var ans = state.answers[step.id] || (state.answers[step.id]=[]);
+    var html = '<div class="dyn-list" id="dynList">';
+    ans.forEach(function(row, ri){
+      html += '<div class="dyn-row" data-i="'+ri+'"><button type="button" class="dyn-remove" data-remove="'+ri+'">×</button><div class="grid">';
+      step.fields.forEach(function(f){
+        var val = row[f.key]||'';
+        if(f.area){
+          html += '<div class="field" style="grid-column:1/-1"><label>'+esc(f.label)+'</label><textarea data-row="'+ri+'" data-key="'+f.key+'" placeholder="'+esc(f.placeholder||'')+'">'+esc(val)+'</textarea></div>';
+        } else {
+          html += '<div class="field"><label>'+esc(f.label)+'</label><input type="text" data-row="'+ri+'" data-key="'+f.key+'" placeholder="'+esc(f.placeholder||'')+'" value="'+esc(val)+'"></div>';
+        }
+      });
+      html += '</div></div>';
+    });
+    html += '</div><button type="button" class="add-row" id="addRow">+ '+esc(step.addLabel||'Adicionar item')+'</button>';
+    return html;
+  }
+
+  function renderArea(){
+    var ans = state.answers.area || {};
+    var groupName = ans.group;
+    var html = '<div class="field"><label>Diretoria / Presidência</label><select id="areaGroup"><option value="">Selecione…</option>';
+    GROUPS.forEach(function(g){ html += '<option value="'+esc(g.name)+'"'+(g.name===groupName?' selected':'')+'>'+esc(g.name)+'</option>'; });
+    html += '</select></div>';
+    var group = GROUPS.filter(function(g){return g.name===groupName;})[0];
+    html += '<div class="field"><label>Área</label><select id="areaArea"'+(group?'':' disabled')+'><option value="">'+(group?'Selecione…':'Escolha a diretoria primeiro')+'</option>';
+    if(group){ group.areas.forEach(function(a){ html += '<option value="'+esc(a)+'"'+(a===ans.area?' selected':'')+'>'+esc(a)+'</option>'; }); }
+    html += '</select></div>';
+    html += '<div class="field"><label>Nome do responsável</label><input type="text" id="areaNome" value="'+esc(ans.nome||'')+'" placeholder="Nome completo"></div>';
+    html += '<div class="field"><label>E-mail do responsável</label><input type="email" id="areaEmail" value="'+esc(ans.email||'')+'" placeholder="nome@enap.gov.br"></div>';
+    return html;
+  }
+
+  function bindArea(step){
+    document.getElementById('areaGroup').addEventListener('change', function(e){
+      var a = state.answers.area || (state.answers.area={});
+      a.group = e.target.value; a.area='';
+      saveState();
+      renderFlow({scroll:false});
+    });
+    var areaSel = document.getElementById('areaArea');
+    if(areaSel){ areaSel.addEventListener('change', function(e){
+      var a = state.answers.area || (state.answers.area={}); a.area = e.target.value; saveState();
+    }); }
+    document.getElementById('areaNome').addEventListener('input', function(e){ (state.answers.area||(state.answers.area={})).nome = e.target.value; saveState(); });
+    document.getElementById('areaEmail').addEventListener('input', function(e){ (state.answers.area||(state.answers.area={})).email = e.target.value; saveState(); });
+  }
+
+  // ---------- ANSWER FORMATTING ----------
+  function fmtAnswer(step, ans){
+    if(ans===undefined || ans===null || ans==='') return null;
+    if(step.type==='text' || step.type==='textarea') return String(ans);
+    if(step.type==='radio'){
+      var o = (step.options||[]).filter(function(o){return o.value===ans.value;})[0];
+      return o ? o.label : null;
+    }
+    if(step.type==='checkbox'){
+      var labels = (ans.values||[]).map(function(v){ var o=(step.options||[]).filter(function(o){return o.value===v;})[0]; return o?o.label:v; });
+      if(ans.other) labels.push('Outros: '+ans.other);
+      return labels.length ? labels.join(', ') : null;
+    }
+    if(step.type==='dynamic-list'){
+      if(!ans.length) return null;
+      return ans.map(function(row){ return step.fields.map(function(f){return row[f.key];}).filter(Boolean).join(' · '); }).join('\n');
+    }
+    if(step.type==='area'){
+      var parts=[];
+      if(ans.group) parts.push(ans.group);
+      if(ans.area) parts.push(ans.area);
+      if(ans.nome) parts.push(ans.nome);
+      if(ans.email) parts.push(ans.email);
+      return parts.length?parts.join(' · '):null;
+    }
+    if(step.type==='upload') return null;
+    return null;
+  }
+
+  // ---------- TIME / PROGRESS ESTIMATE ----------
+  // Walks the graph from a given step using the "quickest" choice at every branch
+  // (the "Não" option where one exists, otherwise the first option) so we can guess
+  // how much is left without knowing the user's future answers.
+  var SECONDS_BY_TYPE = { radio:6, checkbox:12, text:14, textarea:32, 'dynamic-list':42, upload:8, note:4, area:24 };
+
+  function defaultNextFor(step, fakeState){
+    if(step.type==='radio'){
+      var opts = step.options||[];
+      if(!opts.length) return typeof step.next==='function' ? step.next(undefined, fakeState) : step.next;
+      var noOpt = opts.filter(function(o){ return /^n(ã|a)o$/i.test(o.label); })[0];
+      var chosen = noOpt || opts[0];
+      if(chosen.next!==undefined){
+        return typeof chosen.next==='function' ? chosen.next(null, fakeState) : chosen.next;
+      }
+      return typeof step.next==='function' ? step.next({value:chosen.value}, fakeState) : step.next;
+    }
+    if(step.type==='checkbox'){
+      var ans = {values:[]};
+      return typeof step.next==='function' ? step.next(ans, fakeState) : step.next;
+    }
+    return typeof step.next==='function' ? step.next(undefined, fakeState) : step.next;
+  }
+
+  function estimateRemaining(fromId){
+    var steps = 0, seconds = 0;
+    var cur = fromId;
+    var fakeState = { queue: (state.queue||[]).slice() };
+    var guard = 0;
+    while(cur && cur!=='review' && guard<200){
+      guard++;
+      var step = STEPS[cur];
+      if(!step) break;
+      steps++;
+      seconds += SECONDS_BY_TYPE[step.type] || 15;
+      var nxt = defaultNextFor(step, fakeState);
+      if(!nxt || nxt===cur) break;
+      cur = nxt;
+    }
+    return {steps:steps, seconds:seconds};
+  }
+
+  function updateProgressUI(){
+    var fillEl = document.getElementById('progressFill');
+    var timeEl = document.getElementById('timeEstimate');
+    if(!fillEl || !timeEl) return;
+    if(state.current==='review'){
+      fillEl.style.width = '100%';
+      timeEl.textContent = state.submitted ? 'Concluído' : 'Pronto para enviar';
+      return;
+    }
+    var rem = estimateRemaining(state.current);
+    var done = state.history.length;
+    var total = done + rem.steps;
+    var pct = total>0 ? Math.min(96, Math.round(done/total*100)) : 6;
+    fillEl.style.width = pct+'%';
+    var mins = Math.ceil(rem.seconds/60);
+    timeEl.textContent = mins<=1 ? 'menos de 1 min restante' : ('~'+mins+' min restantes');
+  }
+
+  // ---------- COMPACT (ANSWERED) CARDS ----------
+  function buildCompactCardHtml(step){
+    if(step.type==='note'){
+      return '<div class="qa-note"><b>Observação —</b> '+esc(step.help||'')+'</div>';
+    }
+    var val = fmtAnswer(step, state.answers[step.id]);
+    return '<div class="qa-card">'+
+      '<div class="qa-card-head">'+
+        '<div class="qa-card-q"><span class="qa-num mono">'+esc(step.num)+'</span>'+esc(step.title)+'</div>'+
+        '<button class="qa-edit" type="button" data-edit="'+esc(step.id)+'">Editar</button>'+
+      '</div>'+
+      '<div class="qa-a'+(val?'':' empty')+'">'+esc(val||'Não informado')+'</div>'+
+    '</div>';
+  }
+
+  function bindCompactEdits(){
+    document.querySelectorAll('[data-edit]').forEach(function(btn){
+      btn.addEventListener('click', function(){ rewindTo(btn.getAttribute('data-edit')); });
+    });
+  }
+
+  // ---------- ACTIVE (EDITABLE) CARD ----------
+  function buildActiveCardHtml(step){
+    var body = '';
+    body += '<div class="kicker">Item '+esc(step.num)+'</div>';
+    body += '<h2 class="q-title">'+esc(step.title)+'</h2>';
+    if(step.type==='note'){
+      body += '<div class="note-box"><b>Observação —</b> '+esc(step.help||'')+'</div>';
+    } else if(step.help){
+      body += '<div class="q-help">'+esc(step.help)+'</div>';
+    }
+    if(step.type==='area'){ body += renderArea(); }
+    else if(step.type==='text'){
+      var v = state.answers[step.id]||'';
+      body += '<div class="field"><input type="text" id="inputMain" value="'+esc(v)+'" placeholder="'+esc(step.placeholder||'Digite aqui…')+'"></div>';
+    } else if(step.type==='textarea'){
+      var vt = state.answers[step.id]||'';
+      body += '<div class="field"><textarea id="inputMain" placeholder="'+esc(step.placeholder||'Digite aqui…')+'">'+esc(vt)+'</textarea></div>';
+    } else if(step.type==='radio'){
+      body += renderOptions(step, false);
+    } else if(step.type==='checkbox'){
+      body += renderOptions(step, true);
+    } else if(step.type==='dynamic-list'){
+      body += renderDynList(step);
+    } else if(step.type==='upload'){
+      body += '<div class="upload-zone"><span class="ic">＋</span>Arraste arquivos aqui ou clique para selecionar<br><span class="proto">protótipo — upload ilustrativo</span></div>';
+    }
+
+    body += '<div class="err-msg" id="errMsg">Essa resposta é necessária para continuar.</div>';
+    body += '<div class="actions">'+
+      '<button class="btn btn-ghost" id="btnBack" type="button"'+(state.history.length===0?' disabled':'')+'>← Voltar</button>'+
+      '<button class="btn btn-primary" id="btnNext" type="button">'+(step.type==='note'?'Continuar':'Avançar →')+'</button>'+
+      '</div>';
+    return body;
+  }
+
+  function bindActiveCard(step){
+    var active = document.getElementById('activeCard');
+    if(step.type==='area'){ bindArea(step); }
+    if(step.type==='text' || step.type==='textarea'){
+      document.getElementById('inputMain').addEventListener('input', function(e){ state.answers[step.id]=e.target.value; saveState(); });
+    }
+    if(step.type==='radio' || step.type==='checkbox'){
+      var opts = active.querySelectorAll('.opt');
+      opts.forEach(function(el){
+        el.addEventListener('click', function(){
+          var val = el.getAttribute('data-val');
+          if(step.type==='radio'){
+            state.answers[step.id] = {value:val};
+            opts.forEach(function(o){o.classList.remove('selected');});
+            el.classList.add('selected');
+          } else {
+            var ans = state.answers[step.id] || (state.answers[step.id]={values:[]});
+            var idx = ans.values.indexOf(val);
+            if(idx>-1){ ans.values.splice(idx,1); el.classList.remove('selected'); }
+            else { ans.values.push(val); el.classList.add('selected'); }
+          }
+          saveState();
+        });
+      });
+      var otherInput = document.getElementById('otherInput');
+      if(otherInput){ otherInput.addEventListener('input', function(e){
+        var ans = state.answers[step.id] || (state.answers[step.id]={values:[]});
+        ans.other = e.target.value; saveState();
+      }); }
+    }
+    if(step.type==='dynamic-list'){
+      active.querySelectorAll('[data-row]').forEach(function(el){
+        el.addEventListener('input', function(){
+          var ri = +el.getAttribute('data-row'), key = el.getAttribute('data-key');
+          state.answers[step.id][ri][key] = el.value; saveState();
+        });
+      });
+      active.querySelectorAll('[data-remove]').forEach(function(el){
+        el.addEventListener('click', function(){
+          var ri = +el.getAttribute('data-remove');
+          state.answers[step.id].splice(ri,1); saveState(); renderFlow({scroll:false});
+        });
+      });
+      document.getElementById('addRow').addEventListener('click', function(){
+        var row = {}; step.fields.forEach(function(f){row[f.key]='';});
+        state.answers[step.id].push(row); saveState(); renderFlow({scroll:false});
+      });
+    }
+
+    document.getElementById('btnBack').addEventListener('click', goBack);
+    document.getElementById('btnNext').addEventListener('click', advance);
+  }
+
+  // ---------- REVIEW / SUBMIT CARD ----------
+  function buildReviewCardHtml(){
+    var html = '';
+    if(!state.submitted){
+      html += '<div class="kicker">Antes de enviar</div><h2 class="q-title">Tudo pronto?</h2><div class="q-help">Revise as respostas acima — clique em “Editar” em qualquer pergunta para corrigir algo antes de enviar.</div>';
+      html += '<div class="actions" style="justify-content:flex-start;gap:14px;"><button class="btn btn-ghost" id="btnBack" type="button">← Voltar</button><button class="btn btn-primary" id="btnSubmit" type="button">Enviar formulário</button></div>';
+    } else {
+      html += '<div class="kicker">Enviado</div><h2 class="q-title">Tudo certo</h2>';
+      html += '<div class="confirm"><span class="ic">✅</span><h3>Formulário enviado</h3><p>A ASCOM/CGCO agradece o envio do formulário de briefing. O responsável pelo atendimento da sua área entrará em contato no próximo dia útil para agendar uma reunião de alinhamento e validação da demanda.</p></div>';
+      html += '<div class="actions" style="justify-content:flex-start;"><button class="rail-reset" style="color:var(--accent-strong);border-color:var(--line);" id="btnRestart" type="button">Iniciar novo briefing</button></div>';
+    }
+    return html;
+  }
+
+  function bindReviewCard(){
+    var backBtn = document.getElementById('btnBack');
+    if(backBtn) backBtn.addEventListener('click', goBack);
+    var submitBtn = document.getElementById('btnSubmit');
+    if(submitBtn) submitBtn.addEventListener('click', function(){ state.submitted=true; saveState(); renderFlow(); });
+    var restartBtn = document.getElementById('btnRestart');
+    if(restartBtn) restartBtn.addEventListener('click', resetAll);
+  }
+
+  // ---------- MAIN RENDER ----------
+  function scrollActiveIntoView(){
+    var el = document.getElementById('activeCard');
+    if(!el) return;
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    el.scrollIntoView({behavior: reduced ? 'auto' : 'smooth', block:'start'});
+  }
+
+  function renderFlow(opts){
+    opts = opts || {};
+    var card = document.getElementById('card');
+    var html = '';
+    state.history.forEach(function(id){
+      var step = STEPS[id];
+      if(step) html += buildCompactCardHtml(step);
+    });
+
+    if(state.current==='review'){
+      document.getElementById('crumbSection').textContent = 'Revisão final';
+      document.getElementById('crumbBadge').textContent = '✓';
+      html += '<div class="qa-active" id="activeCard">' + buildReviewCardHtml() + '</div>';
+      card.innerHTML = html;
+      bindCompactEdits();
+      bindReviewCard();
+    } else {
+      var step = STEPS[state.current];
+      var sectionMeta = SECTIONS[step.section-1];
+      document.getElementById('crumbSection').textContent = 'Seção '+step.section+' · '+sectionMeta.name;
+      document.getElementById('crumbBadge').textContent = step.num;
+      html += '<div class="qa-active" id="activeCard">' + buildActiveCardHtml(step) + '</div>';
+      card.innerHTML = html;
+      bindCompactEdits();
+      bindActiveCard(step);
+    }
+
+    renderRail();
+    updateProgressUI();
+    if(opts.scroll !== false) scrollActiveIntoView();
+  }
+
+  function render(){ renderFlow(); }
+
+  function resetAll(){
+    state = { current:'area', answers:{}, history:[], queue:[], submitted:false };
+    try{ sessionStorage.removeItem('briefing-ascom-v1'); }catch(e){}
+    render();
+    window.scrollTo(0,0);
+  }
+
+  document.getElementById('resetBtn').addEventListener('click', resetAll);
+  document.getElementById('mobileToggle').addEventListener('click', function(){
+    document.getElementById('rail').classList.toggle('rail-open');
+  });
+
+  loadState();
+  render();
+})();
+</script>
